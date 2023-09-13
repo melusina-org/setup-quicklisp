@@ -1,0 +1,48 @@
+name: 'Setup Common Lisp'
+description: >-
+  Setup Common Lisp on a GitHub Runner.
+branding:
+  icon: box
+  color: blue
+inputs:
+  implementation:
+    description: |
+      The Common Lisp implementation to setup. This can be one of the
+      following values:
+
+        
+        abcl ecl sbcl
+
+      in the future we would like to support all of
+
+        abcl clasp clisp ecl gcl sbcl
+      
+    default: 'sbcl'
+outputs:
+  quicklisp-home:
+    value: ${{ steps.setup-quicklisp.outputs.quicklisp-home }}
+    description: >-
+      The installation directory for the QuickLisp distribution.
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Install QuickLisp'
+      if: runner.os == 'Linux'
+      shell: sh
+      run: >-
+        sudo apt install
+        cl-quicklisp
+    - name: 'Install QuickLisp'
+      if: runner.os == 'macOS'
+      shell: sh
+      run: >-
+        sudo port install
+        cl-quicklisp
+    - name: 'Setup Quicklisp'
+      id: setup-quicklisp
+      shell: sh
+      run: >-
+        PACKAGE=${{ github.repository }}
+        QUICKLISP_HOME=${HOME}/quicklisp
+        ${{ github.action_path }}/with_lisp_implementation ${{ inputs.implementation }}
+        ${{ github.action_path }}/setup-quicklisp.lisp
