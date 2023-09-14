@@ -3,6 +3,8 @@
 This GitHub Action installs QuickLisp for various Common Lisp
 implementations on GitHub Runners.
 
+[![Continuous Integration](https://github.com/melusina-org/setup-quicklisp/actions/workflows/continuous-integration.yaml/badge.svg)](https://github.com/melusina-org/setup-quicklisp/actions/workflows/continuous-integration.yaml)
+
 This action is complemented by other actions related to the Common
 Lisp eco system:
 
