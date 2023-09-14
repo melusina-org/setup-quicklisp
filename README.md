@@ -72,7 +72,7 @@ jobs:
       - uses: melusina-org/setup-common-lisp@v1
         with:
           implementation: '${{ matrix.implementation }}'
-      - uses: ./
+      - uses: melusina-org/setup-quicklisp@v1
         id: 'quicklisp'
         with:
           implementation: '${{ matrix.implementation }}'
