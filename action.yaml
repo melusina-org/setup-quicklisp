@@ -1,15 +1,15 @@
-name: 'Setup Common Lisp'
+name: 'Setup QuickLisp'
 description: >-
-  Setup Common Lisp on a GitHub Runner.
+  Setup QuickLisp on a GitHub Runner where Common Lisp
+  is already installed.
 branding:
   icon: box
   color: blue
 inputs:
   implementation:
     description: |
-      The Common Lisp implementation to setup. This can be one of the
-      following values:
-
+      The Common Lisp implementation to setup QuickLisp for.
+      This can be one of the following values:
         
         abcl ecl sbcl
 
@@ -20,9 +20,13 @@ inputs:
     default: 'sbcl'
 outputs:
   quicklisp-home:
-    value: ${{ steps.setup-quicklisp.outputs.quicklisp-home }}
+    value: '${{ steps.setup-quicklisp.outputs.quicklisp-home }}'
     description: >-
       The installation directory for the QuickLisp distribution.
+  quicklisp-local-projects:
+    value: '${{ steps.setup-quicklisp.outputs.quicklisp-home }}/local-projects'
+    description: >-
+      The local project directory for the QuickLisp distribution.
 runs:
   using: 'composite'
   steps:

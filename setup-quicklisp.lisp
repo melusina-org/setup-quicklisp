@@ -1,6 +1,6 @@
 ;;;; setup-quicklisp.lisp — Setup QuickLisp
 
-;;;; Melusina Actions (https://github.com/melusina-org/actions)
+;;;; Melusina Actions (https://github.com/melusina-org/setup-quicklisp)
 ;;;; This file is part of Melusina Actions.
 ;;;;
 ;;;; Copyright © 2023 Michaël Le Barbier
