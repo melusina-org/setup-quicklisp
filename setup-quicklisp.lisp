@@ -59,7 +59,10 @@
 
 (defparameter *quicklisp-additional-systems*
   (when (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS")
-    (uiop:split-string (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS")))
+    (uiop:split-string
+     (string-trim
+      '(#\Space #\Tab)
+      (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS"))))
   "List of additional packages to install.")
 
 (defun write-detail (&key name key value)
