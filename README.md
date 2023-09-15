@@ -40,6 +40,8 @@ Lisp implementation can use QuickLisp.
   and maybe other implementations. Please open an issue to express
   interest for other implementations.
 
+* `additional-systems` — When set, the list of additional systems to
+  load with QuickLisp.
 
 ## Outputs
 

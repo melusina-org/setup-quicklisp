@@ -19,24 +19,52 @@ lisp_load_file()
 (
     local argv script
 
+    renaissance_lisp()
+    {
+	set -- "$@" --break
+	while true; do
+	    case "$1" in
+		*.lisp)
+		    set -- "$@" --load "$1"
+		    shift
+		    ;;
+		'('*')')
+		    set -- "$@" --eval "$1"
+		    shift
+		    ;;
+		--break)
+		    set -- "$@" --eval '(quit)'
+		    shift
+		    break
+		    ;;
+		*)
+		    1>&2 printf 'Failure: %s: Cannot process argument.\n' "$1"
+		    exit 64
+		    ;;
+	    esac
+	done
+	exec "${lisp_implementation}" "$@"
+    }
+
     if [ $# -eq 0 ]; then
 	script=$(mktemp)
 	trap "rm -f ${script}" EXIT TERM INT
 	cat > "${script}"
 	set -- "${script}"
     fi
+
+
     
     case "${lisp_implementation}" in
 	abcl|ecl|sbcl)
-	    exec "${lisp_implementation}" --load "$1" --eval '(quit)'
+	    renaissance_lisp "$@"
 	    ;;
 	clisp)
 	    ubuntu_asdf="/usr/share/common-lisp/source/cl-asdf/asdf.lisp"
 	    if [ -f "${ubuntu_asdf}" ]; then
-		exec clisp "${ubuntu_asdf}" "$1"
-	    else
-		exec clisp "$1"
+		set -- "${ubuntu_asdf}" "$@"
 	    fi
+	    exec clisp "$@"
 	    ;;
 	*)
 	    set -x

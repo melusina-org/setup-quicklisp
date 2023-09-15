@@ -23,6 +23,9 @@ jobs:
         id: 'quicklisp'
         with:
           implementation: '${{ matrix.implementation }}'
+          additional-systems: >-
+            alexandria
+            org.melusina.confidence
       - name: 'Validate installed implementation'
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-home }}'
@@ -50,6 +53,9 @@ jobs:
         id: 'quicklisp'
         with:
           implementation: '${{ matrix.implementation }}'
+          additional-systems: >-
+            alexandria
+            org.melusina.confidence
       - name: 'Validate installed implementation'
         continue-on-error: true
         run: |

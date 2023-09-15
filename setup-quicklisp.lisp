@@ -14,30 +14,29 @@
 (require '#:asdf)
 (require '#:uiop)
 
-(load
- (labels
-     ((select-quicklisp (process)
-	(uiop:run-program '("sed" "-n" "-e" "/quicklisp[.]lisp$/{s/^ *//;p;}")
-			  :input (uiop:process-info-output process)
-			  :output :string))
-      (ubuntu-quicklisp ()
-	(select-quicklisp
-	 (uiop:launch-program '("dpkg" "-L" "cl-quicklisp")
-                              :output :stream)))
-      (macports-quicklisp ()
-	(select-quicklisp
-	 (uiop:launch-program '("port" "contents" "cl-quicklisp")
-			      :output :stream)))
-      (find-quicklisp ()
-	(cond
-	  ((uiop:os-macosx-p)
-	   (macports-quicklisp))
-	  ((uiop:os-unix-p)
-	   (ubuntu-quicklisp))))
-      (quicklisp-pathname ()
-	(pathname (string-trim '(#\Space #\Newline #\Return #\Tab)
-			       (find-quicklisp)))))
-   (quicklisp-pathname)))
+(labels
+    ((select-quicklisp (process)
+       (uiop:run-program '("sed" "-n" "-e" "/quicklisp[.]lisp$/{s/^ *//;p;}")
+			 :input (uiop:process-info-output process)
+			 :output :string))
+     (ubuntu-quicklisp ()
+       (select-quicklisp
+	(uiop:launch-program '("dpkg" "-L" "cl-quicklisp")
+                             :output :stream)))
+     (macports-quicklisp ()
+       (select-quicklisp
+	(uiop:launch-program '("port" "contents" "cl-quicklisp")
+			     :output :stream)))
+     (find-quicklisp ()
+       (cond
+	 ((uiop:os-macosx-p)
+	  (macports-quicklisp))
+	 ((uiop:os-unix-p)
+	  (ubuntu-quicklisp))))
+     (quicklisp-pathname ()
+       (pathname (string-trim '(#\Space #\Newline #\Return #\Tab)
+			      (find-quicklisp)))))
+  (load (quicklisp-pathname)))
 
 (defpackage #:org.melusina.lisp-action/setup-quicklisp
   (:use #:common-lisp))
