@@ -11,7 +11,7 @@ jobs:
   install-quicklisp-on-tier-1-platforms:
     strategy:
       matrix:
-        implementation: ['abcl', 'ecl', 'sbcl']
+        implementation: ['abcl', 'sbcl']
         os: ['ubuntu-latest', 'macos-latest']
     runs-on: '${{ matrix.os }}'
     name: 'Install QuickLisp'
@@ -49,7 +49,7 @@ jobs:
     needs: install-quicklisp-on-tier-1-platforms
     strategy:
       matrix:
-        implementation: ['clisp', 'gcl']
+        implementation: ['clisp', 'ecl', 'gcl']
         os: ['ubuntu-latest', 'macos-latest']
     runs-on: '${{ matrix.os }}'
     name: 'Install QuickLisp'
