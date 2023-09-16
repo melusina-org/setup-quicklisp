@@ -47,13 +47,11 @@ lisp_load_file()
     }
 
     if [ $# -eq 0 ]; then
-	script=$(mktemp)
+	script="$(mktemp).lisp"
 	trap "rm -f ${script}" EXIT TERM INT
 	cat > "${script}"
 	set -- "${script}"
     fi
-
-
     
     case "${lisp_implementation}" in
 	abcl|ecl|sbcl)

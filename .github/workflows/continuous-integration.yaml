@@ -30,11 +30,21 @@ jobs:
           additional-systems: >-
             alexandria
             org.melusina.confidence
-      - name: 'Validate installed implementation'
+      - name: 'Ensure that QuickLisp Home exists'
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-home }}'
+      - name: 'Ensure that QuickLisp Local Projects exists'
+        run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-local-projects }}'
-
+      - name: 'Ensure that installed systems can be required'
+        run: |
+          ./with_lisp_implementation ${{ matrix.implementation }} <<EOF
+          (dolist (package-name '(#:alexandria #:org.melusina.confidence))
+            (require package-name)
+            (format *trace-output* "~&Find package ~A: ~A~&"
+              package-name (find-package package-name)))
+          EOF
+      
   install-quicklisp-on-tier-2-platforms:
     needs: install-quicklisp-on-tier-1-platforms
     strategy:
@@ -60,8 +70,21 @@ jobs:
           additional-systems: >-
             alexandria
             org.melusina.confidence
-      - name: 'Validate installed implementation'
+      - name: 'Ensure that QuickLisp Home exists'
         continue-on-error: true
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-home }}'
+      - name: 'Ensure that QuickLisp Local Projects exists'
+        continue-on-error: true
+        run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-local-projects }}'
+      - name: 'Ensure that installed systems can be required'
+        continue-on-error: true
+        run: |
+          ./with_lisp_implementation ${{ matrix.implementation }} <<EOF
+          (require "alexandria")
+          (require "org.melusina.confidence")
+          (dolist (package-name '("alexandria" "org.melusina.confidence"))
+            (format *trace-output* "~&Find package ~A: ~A~&"
+              package-name (find-package package-name)))
+          EOF
