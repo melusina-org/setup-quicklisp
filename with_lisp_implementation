@@ -43,6 +43,16 @@ lisp_load_file()
 		    ;;
 	    esac
 	done
+
+	case "${lisp_implementation}" in
+	    sbcl)
+		set -- --disable-debugger "$@"
+		;;
+	    ecl)
+		set --  --nodebug "$@"
+		;;
+	esac
+
 	exec "${lisp_implementation}" "$@"
     }
 
