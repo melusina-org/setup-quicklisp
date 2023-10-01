@@ -13,6 +13,9 @@ jobs:
       matrix:
         implementation: ['abcl', 'sbcl']
         os: ['ubuntu-latest', 'macos-latest']
+        include:
+          - implementation: 'sbcl'
+            os: 'windows-latest'
     runs-on: '${{ matrix.os }}'
     name: 'Install QuickLisp'
     steps:
@@ -31,12 +34,15 @@ jobs:
             alexandria
             org.melusina.confidence
       - name: 'Ensure that QuickLisp Home exists'
+        shell: sh
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-home }}'
       - name: 'Ensure that QuickLisp Local Projects exists'
+        shell: sh
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-local-projects }}'
       - name: 'Ensure that installed systems can be required'
+        shell: sh
         run: |
           ./with_lisp_implementation ${{ matrix.implementation }} <<EOF
           (dolist (package-name '(#:alexandria #:org.melusina.confidence))
@@ -51,6 +57,9 @@ jobs:
       matrix:
         implementation: ['clisp', 'ecl', 'gcl']
         os: ['ubuntu-latest', 'macos-latest']
+        include:
+          - implementation: 'clisp'
+            os: 'windows-latest'
     runs-on: '${{ matrix.os }}'
     name: 'Install QuickLisp'
     steps:
@@ -72,14 +81,17 @@ jobs:
             org.melusina.confidence
       - name: 'Ensure that QuickLisp Home exists'
         continue-on-error: true
+        shell: sh
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-home }}'
       - name: 'Ensure that QuickLisp Local Projects exists'
         continue-on-error: true
+        shell: sh
         run: |
           test -d '${{ steps.quicklisp.outputs.quicklisp-local-projects }}'
       - name: 'Ensure that installed systems can be required'
         continue-on-error: true
+        shell: sh
         run: |
           ./with_lisp_implementation ${{ matrix.implementation }} <<EOF
           (require "alexandria")

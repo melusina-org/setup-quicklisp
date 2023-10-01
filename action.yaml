@@ -48,6 +48,11 @@ runs:
       run: >-
         sudo port install
         cl-quicklisp
+    - name: 'Install QuickLisp'
+      if: runner.os == 'Windows'
+      shell: sh
+      run: |
+        curl -L -o ${GITHUB_ACTION_PATH}/quicklisp.lisp  https://beta.quicklisp.org/quicklisp.lisp
     - name: 'Setup Quicklisp'
       id: setup-quicklisp
       shell: sh
@@ -55,5 +60,5 @@ runs:
         PACKAGE=${{ github.repository }}
         QUICKLISP_HOME=${GITHUB_WORKSPACE}/quicklisp
         QUICKLISP_ADDITIONAL_SYSTEMS='${{ inputs.additional-systems }}'
-        ${{ github.action_path }}/with_lisp_implementation ${{ inputs.implementation }}
-        ${{ github.action_path }}/setup-quicklisp.lisp
+        ${GITHUB_ACTION_PATH}/with_lisp_implementation ${{ inputs.implementation }}
+        ${GITHUB_ACTION_PATH}/setup-quicklisp.lisp

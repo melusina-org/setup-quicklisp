@@ -27,12 +27,19 @@
        (select-quicklisp
 	(uiop:launch-program '("port" "contents" "cl-quicklisp")
 			     :output :stream)))
+     (windows-quicklisp ()
+       (namestring
+	(merge-pathnames
+	 #p"quicklisp.lisp"
+	 (uiop:getenv-pathname "GITHUB_ACTION_PATH" :ensure-directory t))))
      (find-quicklisp ()
        (cond
 	 ((uiop:os-macosx-p)
 	  (macports-quicklisp))
 	 ((uiop:os-unix-p)
-	  (ubuntu-quicklisp))))
+	  (ubuntu-quicklisp))
+	 ((uiop:os-windows-p)
+	  (windows-quicklisp))))
      (quicklisp-pathname ()
        (pathname (string-trim '(#\Space #\Newline #\Return #\Tab)
 			      (find-quicklisp)))))
