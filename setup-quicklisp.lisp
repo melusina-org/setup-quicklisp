@@ -52,10 +52,11 @@
 
 (defparameter *quicklisp-home*
   (or
-   (uiop:getenv "QUICKLISP_HOME")
+   (uiop:getenv-absolute-directory "QUICKLISP_HOME")
+   (uiop:merge-pathnames*
    (merge-pathnames
-    #p"quicklisp/"
-    (user-homedir-pathname)))
+    (make-pathname :directory (list :relative "quicklisp"))
+    (user-homedir-pathname))))
   "Home directory for QuickLisp.")
 
 (defparameter *quicklisp-register-local-projects*
@@ -120,7 +121,13 @@ to job output."
   (write-detail
    :name "QuickLisp Home"
    :key "quicklisp-home"
-   :value *quicklisp-home*))
+   :value *quicklisp-home*)
+  (write-detail
+   :name "QuickLisp Local Projects"
+   :key "quicklisp-local-projects"
+   :value (uiop:merge-pathnames*
+	   (make-pathname :directory (list :relative "local-projects"))
+	   *quicklisp-home*)))
 
 (progn
   (install-quicklisp)

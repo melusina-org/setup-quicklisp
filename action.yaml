@@ -30,7 +30,7 @@ outputs:
     description: >-
       The installation directory for the QuickLisp distribution.
   quicklisp-local-projects:
-    value: '${{ steps.setup-quicklisp.outputs.quicklisp-home }}/local-projects'
+    value: '${{ steps.setup-quicklisp.outputs.quicklisp-local-projects }}'
     description: >-
       The local project directory for the QuickLisp distribution.
 runs:
