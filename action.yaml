@@ -62,3 +62,24 @@ runs:
         QUICKLISP_ADDITIONAL_SYSTEMS='${{ inputs.additional-systems }}'
         ${GITHUB_ACTION_PATH}/with_lisp_implementation ${{ inputs.implementation }}
         ${GITHUB_ACTION_PATH}/setup-quicklisp.lisp
+    - name: 'Show QuickLisp Initialisation File'
+      if: inputs.implementation == 'sbcl'
+      id: debug-quicklisp-1
+      shell: sh
+      run: >-
+        cat ${HOME}/.sbclrc
+    - name: 'Show QuickLisp Initialisation File'
+      if: inputs.implementation == 'sbcl'
+      id: debug-quicklisp-2
+      shell: sh
+      run: >-
+        echo '(warn "Reading Initialisation file.")' >> ${HOME}/.sbclrc
+    - name: 'Require ALEXANDRIA'
+      if: inputs.implementation == 'sbcl'
+      id: debug-quicklisp-3
+      shell: sh
+      run: |
+        ${GITHUB_ACTION_PATH}/with_lisp_implementation ${{ inputs.implementation }} <<EOF
+        (ql:quickload "alexandria")
+        (require "alexandria")
+        EOF

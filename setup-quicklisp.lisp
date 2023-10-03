@@ -73,6 +73,13 @@
       (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS"))))
   "List of additional packages to install.")
 
+(defun init-file-pathname ()
+  (merge-pathnames
+   (funcall
+    (find-symbol "INIT-FILE-NAME" "QL-IMPL-UTIL"))
+   (user-homedir-pathname)))
+
+
 (defun write-detail (&key name key value)
   "Write detail NAME with VALUE.
 Additionally, when running on GitHub Actions, the key is written
@@ -86,24 +93,38 @@ to job output."
 
 (defun install-quicklisp ()
   (quicklisp-quickstart:install :path *quicklisp-home*)
-  (eval
-   (list
-    (find-symbol "WITHOUT-PROMPTING" "QL-UTIL")
-    (list (find-symbol "ADD-TO-INIT-FILE" "QL")))))
+  (flet ((general-case ()
+	   (eval
+	    (list
+	     (find-symbol "WITHOUT-PROMPTING" "QL-UTIL")
+	     (list (find-symbol "ADD-TO-INIT-FILE" "QL")))))
+	 (on-windows-runners ()
+	   (with-open-file (init-file (init-file-pathname)
+				   :direction :output
+				   :if-exists :append :if-does-not-exist :create)
+	     (format init-file ";;; The following lines added by ql:add-to-init-file:~%")
+	     (format init-file "#-quicklisp~%")
+	     (format init-file "(let ((quicklisp-init
+  (merge-pathnames #p~S (user-homedir-pathname))))
+    (when (probe-file quicklisp-init)
+      (load quicklisp-init)))~%" 
+		     (uiop:merge-pathnames*
+		      #p"setup.lisp"
+		      *quicklisp-home*)))))
+    (cond
+      ((uiop:os-windows-p)
+       (on-windows-runners))
+      (t
+       (general-case)))))
 
 (defun register-local-projects ()
   (when *quicklisp-register-local-projects*
     (let ((workspace
-	    (uiop:getenv "GITHUB_WORKSPACE"))
-	  (init-file
-	    (merge-pathnames
-	     (funcall
-	      (find-symbol "INIT-FILE-NAME" "QL-IMPL-UTIL"))
-	     (user-homedir-pathname))))
+	    (uiop:getenv "GITHUB_WORKSPACE")))
       (when workspace
 	(pushnew (pathname workspace)
 		 (symbol-value (find-symbol "*LOCAL-PROJECT-DIRECTORIES*" "QL")))
-	(with-open-file (output init-file
+	(with-open-file (output (init-file-pathname)
 				:direction :output
 				:if-exists :append :if-does-not-exist :create)
 	  (format output "~&#+quicklisp~&(pushnew #p~S ql:*local-project-directories*)"
