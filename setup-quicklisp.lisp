@@ -66,11 +66,13 @@
   "Flag governing registering local projects.")
 
 (defparameter *quicklisp-additional-systems*
-  (when (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS")
-    (uiop:split-string
-     (string-trim
-      '(#\Space #\Tab)
-      (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS"))))
+  (flet ((remove-empty-words (wordlist)
+	   (remove "" wordlist
+		   :test #'string=)))
+    (when (uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS")
+      (remove-empty-words
+       (uiop:split-string
+	(uiop:getenv "QUICKLISP_ADDITIONAL_SYSTEMS")))))
   "List of additional packages to install.")
 
 (defun init-file-pathname ()
